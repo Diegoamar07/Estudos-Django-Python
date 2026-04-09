@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <!-- Criando e estilizando o titulo da pagina. -->
+  <h2 style="color: #0096c7; margin-bottom: 20px; padding-bottom: 5px; text-align: left; text-decoration: underline;">
+      Cadastro Grupo de Fornecedor
+  </h2>
+
+  <form method="post">
+      {% csrf_token %}
+      <table class="tabela-form">
+        {{ novo_grupo_form.as_table }}
+      </table>
+  
+      <input type="submit" value="Cadastrar Grupo" class="btn-verde">
+  </form>
+
+{% endblock %}
+
+
+

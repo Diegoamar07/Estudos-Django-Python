@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form method="GET">
+        <input type="text" class="input-busca" name="busca" placeholder="Nome do Fornecedor" value="{{ termo_buscado|default:'' }}" autofocus>
+        <button type="submit" class="btn-busca">Buscar</button>
+    </form>
+
+    {% if rel_fornec_view %}
+        {% for f in rel_fornec_view %}
+            <p style="margin-left: 20px;"> {{f.nome_fornecedor}} - {{f.email}} </p>
+        {% endfor %}
+    
+    {% elif termo_buscado %}
+        <p>Nenhum dado encontrado para sua busca.</p>
+
+    {% endif %}
+
+
+{% endblock %}

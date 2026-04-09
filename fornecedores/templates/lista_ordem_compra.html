@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <form method="GET">
+        <div style="margin-left: 20px; margin-top: 9px; font-size: 13px; color: #666; ">
+            💡 Dica: Buscar por: <strong>Número da OC</strong>, <strong>Fornecedor</strong> ou <strong>Produto</strong>.
+        </div>
+        <input type="text" class="input-busca" name="busca" placeholder="Digite a OC" autofocus>
+        <button type="submit" class="btn-busca">Buscar</button>
+    </form>
+
+    <style>
+        .tabela-relatorio {
+            width: 95%;
+            margin-left: 20px;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tabela-relatorio th {
+            background-color: #2e7d32; /* Um verde elegante para fornecedores */
+            color: white;
+            text-align: left;
+            padding: 12px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .tabela-relatorio td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        /* Efeito "zebrado" (uma linha sim, outra não) */
+        .tabela-relatorio tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Efeito ao passar o mouse */
+        .tabela-relatorio tr:hover {
+            background-color: aquamarine;
+        }
+
+    </style>
+
+    {% if ordens_compra %}
+        <table class="tabela-relatorio">
+            <thead>
+                <tr>
+                    <th>Número OC</th>
+                    <th>Fornecedor</th>
+                    <th>Grupo Fornecedor</th>
+                    <th>produto</th>
+                    <th>Unidade</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Total OC</th>
+                    <th>Status</th>
+                    <th>Descrição</th>
+                    <th>Data OC</th>
+                    <th>Situação OC</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for oc in ordens_compra %}
+                <tr>
+                    <td><strong>{{oc.numero_oc}}</strong></td>
+                    <td>{{oc.fornecedores|default:'-'}}</td>
+                    <td>{{oc.grupo_fornec|default:'-'}}</td>
+                    <td>{{oc.produto|default:'-'}}</td>
+                    <td>{{oc.unidade|default:'-'}}</td>
+                    <td>R${{oc.preco_produto|floatformat:2|default:'-'}}</td>
+                    <td>{{oc.quantidade|default:'-'}}</td>
+                    <td>R${{oc.total_oc|floatformat:2|default:'-'}}</td>
+                    <td>{{oc.status|default:'-'}}</td>
+                    <td>{{oc.descricao|default:'-'}}</td>
+                    <td>{{oc.data_oc|date:"d/m/Y H:i"}}</td>
+                    <td>
+                        {# BOTAO APARECE APENAS SE ESTIVER ABERTO #}
+                        {% if oc.status == "ABERTO" %}
+                        <a href="{% url 'ordem_compra' %}?id={{ oc.id }}" class="btn-editar">
+                            Editar OC
+                        </a>
+                        {% else %}
+                            <span style="color: gray; font-style: italic;">OC Congelada</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="paginacao" style="font-size: 18px; margin: 20px 0; text-align: center; font-family: Arial, sans-serif;">
+            {# Percorre todos os números de página que o Paginator criou #}
+            {% for num in ordens_compra.paginator.page_range %}
+
+                {# Se for a página que o usuário está vendo agora, deixa em negrito e sem link #}
+                {% if ordens_compra.number == num %}
+                    <strong>{{ num }}</strong>
+                {% else %}
+                    {# Se não for a página atual, cria o link para o número #}
+                    <a href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <p style="margin-left: 20px; color: black;">Nenhum dado encontrado!</p>
+    {% endif %}
+
+{% endblock %}
+

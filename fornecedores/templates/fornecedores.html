@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Fornecedores{% endblock %}
+
+
+{% block content %}
+
+    <form method="GET" action="{% url 'fornec_list' %}">
+        <input type="texto" class="input-busca" name="busca" placeholder="Nome do fornecedor">
+        <button type="submit" class="btn-busca">Buscar</button>
+    </form>
+
+    {% if fornec %}
+
+        {% for f in fornec %}
+            <h2 style="margin-left: 20px;">
+                {{f.nome_fornecedor}} - 
+                <a href="mailto:{{f.email}}" style="color: #007bff">{{f.email}}</a>  
+                <small style="font-size: 19px; color: gray;">{{f.grupo_fornecedor}}</small>
+            </h2>
+        {% endfor %}
+
+    {% else %}
+        <p class="no-results">Nenhum fornecedor cadastrado.</p>
+    {% endif %}
+
+{% endblock %}
+

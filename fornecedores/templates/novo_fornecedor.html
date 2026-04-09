@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h2 style="color: #0096c7; margin-bottom: 20px; padding-bottom: 5px; text-align: left; text-decoration: underline;">
+        Cadastro Novo Fornecedor
+    </h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <table class="tabela-form">
+            {{novo_fornec_form.as_table}}
+        </table>
+
+        <input type="submit" value="Cadastrar Fornecedor" class="btn-verde">
+
+    </form>
+
+    <script>
+        window.onload = function() {
+            // Pega o caminho que veio do banco (passado pela sua View)
+            var caminhoAtual = "{{ fornecedor_selecionado.foto_grupo_fornecedor.name|default:'' }}";
+            var inputFoto = document.getElementById("id_foto_grupo_fornecedor");
+
+            if (caminhoAtual && inputFoto) {
+                // Criamos um DataTransfer para "simular" um arquivo preenchido
+                // Isso faz o texto "Nenhum arquivo selecionado" mudar para o nome da foto
+                const myFile = new File([''], caminhoAtual, { type: 'text/plain' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(myFile);
+                inputFoto.files = dataTransfer.files;
+            }
+        }
+    </script>
+
+
+{% endblock %}
+

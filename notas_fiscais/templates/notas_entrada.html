@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <style>
+        /* Container principal para o formulário */
+        .form-nota-fiscal {
+            padding: 20px;
+            background-color: #f8f9fa;
+            font-family: sans-serif;
+        }
+
+        /* Estilo dos Cards (Seções) */
+        .card-secao {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .titulo-secao {
+            color: #0096c7;
+            border-bottom: 2px solid #0096c7;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        /* Grid de alinhamento */
+        .grid-campos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            align-items: end; 
+        }
+
+        /* Estilo padrão para todos os campos do Django */
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .campo-grupo label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .campo-grupo input, 
+        .campo-grupo select, 
+        .campo-grupo textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            height: 38px; 
+            background-color: #e9ecef; 
+        }
+
+        /* Grupo de Pesquisa (Input + Botão) */
+        .busca-container {
+            display: flex;
+            width: 100%;
+        }
+
+        .busca-container input {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            flex: 1;
+        }
+
+        .btn-pesquisar {
+            background: #0096c7;
+            color: white;
+            border: 1px solid #0096c7;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            padding: 0 15px;
+            cursor: pointer;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        /* Tabela de Relatório no Modal */
+        .tabela-relatorio {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            margin-top: 10px;
+        }
+
+        .tabela-relatorio th {
+            background-color: #2e7d32; 
+            color: white;
+            text-align: left;
+            padding: 12px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .tabela-relatorio td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .tabela-relatorio tr:hover {
+            background-color: aquamarine;
+        }
+
+        .btn-verde {
+            background-color: #2d6a4f;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+    </style>
+
+    <h2 style="color: #0096c7; margin: 20px; text-decoration: underline;">
+        Cadastro Notas Fiscais de Entrada
+    </h2>
+
+    <form method="post" class="form-nota-fiscal">
+        {% csrf_token %}
+        <!-- SECAO 1 -->
+        <div class="card-secao">
+            <h3 class="titulo-secao">Origem e Identificação</h3>
+            <div class="grid-campos">
+                <div class="campo-grupo">
+                    <label>{{ notas_entrada.numero_oc.label }}</label>
+                    <div class="busca-container">
+                        {{ notas_entrada.numero_oc }}
+                        <button type="button" id="btnAbrir" class="btn-pesquisar">🔍 Buscar</button>
+                    </div>
+                </div>
+                <div class="campo-grupo">
+                    <label> {{notas_entrada.data_ordem.label}} </label>
+                    <div>
+                        {{ notas_entrada.data_ordem }}
+                    </div>
+                </div>
+                <div class="campo-grupo">
+                    <label> {{notas_entrada.status.label}} </label>
+                    {{ notas_entrada.status }}
+                </div>
+                <div class="campo-grupo">
+                    <label> {{notas_entrada.descricao.label}} </label>
+                    {{ notas_entrada.descricao }}
+                </div>
+                <div class="campo-grupo">
+                    <label>{{ notas_entrada.data_entrada.label }}</label>
+                    {{ notas_entrada.data_entrada }}
+                </div>
+            </div>
+        </div>
+        <!-- SECAO 2 -->
+        <div class="card-secao">
+            <h3 class="titulo-secao">Detalhes do Item e Valores</h3>
+            <div class="grid-campos">
+                <div class="campo-grupo" style="grid-column: span 2;">
+                    <label>{{ notas_entrada.fornecedor.label }}</label>
+                    {{ notas_entrada.fornecedor }}
+                </div>
+                <div class="campo-grupo"><label>{{ notas_entrada.produto.label }}</label>{{ notas_entrada.produto }}</div>
+                <div class="campo-grupo"><label>{{ notas_entrada.unidade.label }}</label>{{ notas_entrada.unidade }}</div>
+                <div class="campo-grupo"><label>{{ notas_entrada.quantidade.label }}</label>{{ notas_entrada.quantidade }}</div>
+                <div class="campo-grupo"><label>{{ notas_entrada.preco_unitario.label }}</label>{{ notas_entrada.preco_unitario }}</div>
+                <div class="campo-grupo">
+                    <label style="color: #2d6a4f;">{{ notas_entrada.total_nota.label }}</label>
+                    {{ notas_entrada.total_nota }}
+                </div>
+            </div>
+        </div>
+
+        <!-- SECAO 3 Identificao nota entrada -->
+        <div class="card-secao">
+            <h3 class="titulo-secao">Identificação Nota Entrada</h3>
+            <div style="display: flex; gap: 20px; align-items: end;">
+                <div class="campo-grupo">
+                    <label>{{ notas_entrada.numero_nota_entrada.label }}</label>
+                    <div style="width: 160px;"> {{ notas_entrada.numero_nota_entrada }} </div> 
+                </div>
+                <div class="campo-grupo">
+                    <label>Data de Entrada</label>
+                    <div style="width: 200px;"> 
+                        <!-- Criamos o input no braço com o ID padrão do Django -->
+                        <input type="text" id="id_data_entrada" name="data_entrada" readonly 
+                            style="background-color: #e9ecef; border: 1px solid #ccc; border-radius: 4px; padding: 8px; width: 100%;"> 
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <button type="submit" class="btn-verde" 
+            style="padding: 20px; display: flex; align-items: center; justify-content: center;">
+            Salvar Nota
+        </button>
+
+    </form>
+
+
+    <!-- JANELA MODAL -->
+    <div id="janelaModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:999; align-items:center; justify-content:center;">
+        <div style="background:white; padding:30px; border-radius:10px; width:1100px; height:400px; position:relative; border-top: 10px solid #0096c7; max-width: 95%;">
+
+            <h3 style="color:#0096c7; margin-top:0;">Pesquisar Ordem de Compra</h3>
+            <hr>
+            <!-- Texto para dica de consulta por OC e por nome fornecedor. -->
+            <p style="color: gray; margin: 0; font-size: 14px;">Dica: Consulte pelo Número OC ou Nome do Fornecedor.</p>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <input type="text" id="campoBuscaOC" placeholder="Nº da OC..." style="width: 200px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <button type="button" id="btnExecutarBusca" style="background:#0096c7; color:white; border:none; padding:0 20px; border-radius:5px; cursor:pointer; font-weight:bold;">BUSCAR 🔍</button>
+            </div>
+            <!-- Local onde inserimos o resultado da consulta no Modal. -->
+            <div id="listaResultado" style="margin-top: 30px; min-height: 100px; border: 1px dashed #ccc; padding: 15px; border-radius: 8px; display: block; overflow-y: auto;">
+                <p style="color: #999; text-align: center;">Digite o número acima e clique em BUSCAR</p>
+            </div>
+
+            <div id="falhaBusca" style="color: #d9534f; font-weight: bold; margin-top: 15px; text-align: center; font-family: sans-serif;">
+
+            </div>
+            <div style="position: absolute; bottom: 30px; right: 40px;">
+                <button type="button" id="btnFechar" style="padding: 10px 30px; background: gray; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; color: white;">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // logica de abrir e fechar o MODAL da janelaPesquisar
+        const botaoPesquisar = document.getElementById("btnAbrir");
+        const botaoFechar = document.getElementById("btnFechar");
+        const janelaPesquisar = document.getElementById("janelaModal");
+
+        botaoPesquisar.onclick = function(){
+
+            document.getElementById("listaResultado").innerHTML = ""; //Limpa a lista
+            document.getElementById("campoBuscaOC").value = ""; //Limpa oque foi digitado
+            document.getElementById("falhaBusca").innerText = ""; // Limpa a msg de erro.
+
+            janelaPesquisar.style.display = 'flex';
+
+        };
+
+        botaoFechar.onclick = function(){
+            janelaPesquisar.style.display = 'none';
+        };
+        // Fim logica janelaPesquisar
+
+
+        // Carregando dicionario da view
+        const ordens = eval(`({{ordens_dict|safe}})`)
+        const ordens_obj = document.getElementById("campoBuscaOC");
+        const botaoBuscar_obj = document.getElementById("btnExecutarBusca");
+
+        function consultaOrdens(){
+            if (ordens_obj.value){
+                let dado_digitado = ordens_obj.value.trim().toLowerCase();
+
+                document.getElementById("listaResultado").innerHTML = "";
+                document.getElementById("falhaBusca").innerText = "";
+
+                let encontrou = false;
+                for (let[id, campos] of Object.entries(ordens)){
+
+                    if (["numero_oc", "fornecedor"].some(campo => String(campos[campo]).trim().toLowerCase().includes(dado_digitado))){
+
+                        document.getElementById("listaResultado").innerHTML += 
+                            "<div style='display: flex; width: 100%; padding: 12px; border-bottom: 1px solid #eee; font-family: Arial, sans-serif; box-sizing: border-box; align-items: center;'> " +
+                                "<span style='color: gray; width: 150px;'>OC: <strong style='color: #0096c7;'>" + campos.numero_oc + "</strong></span>" +
+                                "<span style='color: gray; width: 350px; font-weight: bold;'>Fornecedor: <strong style='color: #0096c7;'>" + campos.fornecedor + "</strong></span>" +
+                                "<span style='color: gray; width: 150px; font-weight: bold;'>Status: <strong style='color: #0096c7;'>" + campos.status + "</strong></span>" +
+                                
+                                // Botão direto aqui (sem a div em volta)
+                                "<button type='button' onclick='preencherCampos(\"" + id + "\")' style='background: #0096c7; color: white; border: none; padding: 7px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 11px; margin-left: 50px; text-transform: uppercase;'>" +
+                                "Carregar OC 📥</button>" +
+                            "</div>";
+                        encontrou = true;
+                    };
+                };
+                if (!encontrou){
+                    document.getElementById("falhaBusca").innerText = "Ordem de Compra não encontrada!";
+                };
+            };
+        };        
+
+        // Consulta padrao ao clicar no botao Buscar.
+        botaoBuscar_obj.addEventListener("click", consultaOrdens);
+
+        // Consulta pelo ENTER no campo de busca somente apos clicar botao ENTER.
+        ordens_obj.addEventListener("keypress", function(event){
+            if (event.key === "Enter"){
+                consultaOrdens();
+                }
+            });
+
+        function preencherCampos(id_selecionado){
+            // Fechando o modal assim que minha funcao preencherCampos for chamada. onclick do button Carregar OC
+            document.getElementById("janelaModal").style.display = 'none';
+            // Busca todos os inputs, selects e textareas dentro do seu formulário
+            const todosCampos = document.querySelectorAll('.form-nota-fiscal input, .form-nota-fiscal select, .form-nota-fiscal textarea');
+            // Percorre cada um deles e remove o 'disabled'
+            todosCampos.forEach(campo => {
+                campo.disabled = false;
+            });
+
+            let ordem_selecionada = ordens[id_selecionado];
+
+            // CAMPOS SEÇÃO -- Origem e Identificacao.
+            // os campos ("id_numero_oc") --> todo campo criado do formulario seja do ModelForm ou de Models,
+            // é criado uma PK para cada campo onde no HTML o nome do campo fica sendo id_nome_campo.
+            document.getElementById("id_numero_oc").value = ordem_selecionada.numero_oc;
+            document.getElementById("id_data_ordem").value = ordem_selecionada.data_oc;            
+            document.getElementById("id_status").value = "FECHADO";
+            document.getElementById("id_descricao").value = ordem_selecionada.descricao;
+
+            // CAMPOS SECAO -- Detalhes do Item e Valores.
+            document.getElementById("id_fornecedor").value = ordem_selecionada.fornecedor_id;
+            document.getElementById("id_produto").value = ordem_selecionada.produto_id;
+            document.getElementById("id_unidade").value = ordem_selecionada.unidade;
+            document.getElementById("id_quantidade").value = ordem_selecionada.quantidade;
+            document.getElementById("id_preco_unitario").value = ordem_selecionada.preco_produto;
+            document.getElementById("id_total_nota").value = ordem_selecionada.total_oc
+
+            // CAMPOS SECAO -- Identificacao Nota Entrada.
+            // pega o objeto pelo nome do campo no formulario: id_numero_nota_entrada 
+            const campoNumeroNota = document.getElementById("id_numero_nota_entrada");
+            // Habilita para ser editado. porque ja vem read_only.
+            campoNumeroNota.removeAttribute("readonly");
+            campoNumeroNota.style.backgroundColor = "white";
+            // Trava so para numeros.
+            campoNumeroNota.addEventListener("input", function(){
+                // Remove qualquer coisa que nao seja numero entre 0 e 9.
+                this.value = this.value.replace(/[^0-9]/g, "");
+            });
+
+            // Pega a data de hoje no formato brasileiro
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+            // Força o valor para dentro do campo que o Django "escondeu"
+            document.getElementById("id_data_entrada").value = dataHoje;
+
+
+
+        }
+
+    document.querySelector('.form-nota-fiscal').addEventListener('submit', function() {
+        this.querySelectorAll('input, select').forEach(c => c.disabled = false);
+    });
+
+
+    </script>
+
+{% endblock %}
+
+

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form method="GET">
+        <input type="text" class="input-busca" name="busca" placeholder="Nome do fornecedor" value="{{ termo_buscado|default:'' }}" autofocus>
+        <button type="submit" class="btn-busca">Buscar</button>
+    </form>
+
+    <style>
+        .tabela-relatorio {
+            width: 95%;
+            margin-left: 20px;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tabela-relatorio th {
+            background-color: #2e7d32; /* Um verde elegante para fornecedores */
+            color: white;
+            text-align: left;
+            padding: 12px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .tabela-relatorio td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        /* Efeito "zebrado" (uma linha sim, outra não) */
+        .tabela-relatorio tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Efeito ao passar o mouse */
+        .tabela-relatorio tr:hover {
+            background-color: aquamarine;
+        }
+
+    </style>
+
+    {% if fornecedores %}
+        <table class="tabela-relatorio">
+            <thead>
+                <tr>
+                    <th>Fornecedor</th>
+                    <th>CNPJ</th>
+                    <th>Telefone</th>
+                    <th>E-mail</th>
+                    <th>Grupo Fornecedor</th>
+                    <th>Foto</th>
+                    <th>Descrição</th>
+                    <th>Data Criação</th>
+                    <th>Ultima Alteração</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in fornecedores %}
+                <tr>
+                    <td><strong>{{f.nome_fornecedor}}</strong></td>
+                    <td>{{f.cnpj|default:'-'}}</td>
+                    <td>{{f.telefone|default:'-'}}</td>
+                    <td>{{f.email|default:'-'}}</td>
+                    <td>{{f.grupo_fornecedor|default:'-'}}</td>
+                    <td>
+                        {% if f.foto_grupo_fornecedor %}
+                            <img src="{{f.foto_grupo_fornecedor.url}}" alt="Foto" style="width: 55%; border-radius: 4px;">
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{f.descricao|default:'-'}}</td>
+                    <td>{{f.data_criacao|date:"d/m/Y H:i"}}</td>
+                    <td>{{f.ultima_alteracao|date:"d/m/Y H:i"}}</td>
+                    <td>
+                        <a href="{% url 'novo_fornecedor' %}?id={{ f.id }}" class="btn-editar">
+                            Editar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif termo_buscado %}
+        <p style="margin-left: 20px; color: black;">Nenhum dado encontrado!</p>
+
+    {% endif %}
+
+{% endblock %}
+

@@ -1,0 +1,172 @@
+{% block content %}
+
+    <style>
+
+        .btn-verde {
+            width: 80%;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px auto 0; /* Centraliza o botao horizontal */ 
+            background-color: #2d6a4f;            
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 14px;
+            cursor: pointer;
+        }
+
+        .btn-verde:hover{
+            background-color: #1b4332;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .container-div {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px; /* Espaço entre um campo e outro */
+        }
+
+        .container-div input{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .container-div input:focus {
+            outline: none;
+            border-color: #2d6a4f; /* Cor verde do seu botão */
+            box-shadow: 0 0 5px rgba(45, 106, 79, 0.3);
+        }
+
+        .labels {
+            font-weight: 600;       /* Deixa o texto levemente em negrito */
+            font-size: 14px;        /* Tamanho padrão legível */
+            color: #333;            /* Cinza escuro para melhor contraste */
+            margin-bottom: 8px;     /* Distância crucial entre a label e o input */
+            display: block;         /* Garante que ocupe a linha toda */
+        }
+
+        .background-cloud {
+            height: 100vh; /* Ocupa a altura toda da tela */
+            width: 100vw;
+            margin: -8px;
+            display: flex;
+            justify-content: center; /* Centraliza o form horizontalmente */
+            align-items: center;     /* Centraliza o form verticalmente */
+            
+            /* Cores suaves de fundo */
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Criando as "Nuvens" com pseudoelementos */
+        .background-cloud::before, .background-cloud::after {
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            filter: blur(80px); /* Esse desfoque cria o efeito de nuvem */
+            z-index: 0; /* Fica atrás do card-pai */
+        }
+
+        .background-cloud::before {
+            top: -10%;
+            left: -10%;
+        }
+
+        .background-cloud::after {
+            bottom: -10%;
+            right: -10%;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .card-pai {
+            position: relative;
+            z-index: 1; /* Garante que o card fique acima das nuvens */
+            /* Seus estilos atuais do card-pai... */
+        }
+
+        .card-pai{
+            background-color: #ffffff !important; /* GARANTE O FUNDO BRANCO */
+            display: block;
+            width: 100%;
+            max-width: 480px;
+            padding: 30px 50px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border: 2px solid #2e7d32;
+            border-top: 8px solid #1a1a1a; /* Sua barra preta */
+            border-radius: 15px;
+            box-sizing: border-box;
+            position: relative;            
+        }
+
+        .welcome-text{
+            display: flex;
+            flex-direction: column; /* Coloca uma mensagem em cima da outra */
+            align-items: center;    /* Centraliza horizontalmente */
+            text-align: center;     /* Garante que o texto fique no meio */
+            margin-bottom: 20px;    /* Espaço em relação aos campos de input */
+        }
+
+        .welcome-text p {
+            margin-top: 5px;       /* Aqui você controla a proximidade exata */
+            color: #666;           /* Cor mais suave para o subtítulo */
+        }
+
+        
+    </style>
+
+
+<div class="background-cloud"> <!-- Inicio controle pagina de fundo -->
+
+    <form method="post">
+        {% csrf_token %}
+
+
+    <div class="card-pai"> <!-- INICIO CARD-PAI -->
+
+        <div class="welcome-text">
+            <h1>Bem Vindo de volta!</h1>
+            <p>Insira seus dados para acessar o sistema.</p>            
+        </div>
+
+        <div class="container-div">
+            <label class="labels">{{user_form.username.label}}</label>
+            {{user_form.username}}
+        </div>
+
+        <div class="container-div">
+            <label class="labels">{{user_form.password.label}}</label>
+            {{user_form.password}}
+        </div>
+
+        <button type="submit" class="btn-verde">Login</button>
+
+    </div> <!-- FIM CARD-PAI --> 
+
+    </form>
+
+</div> <!-- FIM controle pagina de fundo -->
+
+    <script>
+
+        // Inserindo o placeholder no campo username
+        document.getElementById("id_username").placeholder = "Nome do Usuário";
+        // Inserindo placeholder no campo password
+        document.getElementById("id_password").placeholder = "Senha do Usuário";
+    
+    </script>
+
+{% endblock %}
+

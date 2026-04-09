@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+  
+  <style>
+    body {
+        font-family: 'Open Sans', sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        background-color: #0096c7;
+        color: #fff;
+        text-align: center;
+    }
+
+    footer {
+        background-color: #ccc;
+        color: #333;
+        padding: 20px;
+        text-align: center;
+    }
+
+    nav {
+        background-color: #0096c7;
+        color: #fff;
+        height: 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+
+    nav ul li {
+        margin: 0 10px;
+    }
+
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        padding: 15px;
+        transition: all 0.3s ease;
+    }
+
+    nav ul li a:hover {
+        background-color: #32bbe8;
+    }
+
+    nav ul li.active a {
+        background-color: #666;
+    }
+
+    nav ul li.active a:hover {
+        background-color: #999;
+    }
+
+    /* Estilizando o botao de dropdown */
+    /* 1. Posicionamento do item pai (o <li>) */
+    .dropdown {
+        position: relative;
+    }
+
+    /* 2. O SEGREDO: Faz a lista aparecer quando o mouse passa no <li> */
+    .dropdown:hover .dropdown-content {
+        display: block !important;
+    }
+
+    /* 3. Estilo da caixa que "cai" (a lista <ul> escondida) */
+    .dropdown-content {
+        display: none; /* Começa escondida */
+        position: absolute;
+        background-color: #0096c7; /* Mesmo azul do seu header */
+        min-width: 200px;
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+        z-index: 1000;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        top: 100%; /* Cola exatamente abaixo do botão */
+        left: 0;
+    }
+
+    /* 4. Ajuste dos itens da lista de dentro */
+    .dropdown-content li {
+        margin: 0 !important;
+        width: 100%;
+    }
+
+    /* 5. Ajuste dos links dentro do menu que abriu */
+    .dropdown-content li a {
+        padding: 12px 16px;
+        display: block;
+        border-bottom: 1px solid #32bbe8;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    /* 6. Garante que o menu não fique cortado pelo nav ou header */
+    nav, header {
+        overflow: visible !important;
+    }
+
+    /* 1. O item que contém o texto "Relatórios" precisa ser relativo */
+    .dropdown-submenu {
+        position: relative;
+    }
+    /* 2. Esconde o submenu lateral e tira ele do fluxo normal (para não empurrar nada) */
+    .dropdown-side {
+        display: none; /* Começa escondido */
+        position: absolute; 
+        left: 100%;    /* Joga o menu todo para a DIREITA do item pai */
+        top: 0;         /* Alinha o topo com o item "Relatórios" */
+        min-width: 200px;
+        background-color: #fff; /* Ajuste para a cor do seu menu */
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        z-index: 999;
+    }
+
+    /* 3. A mágica do Hover: quando passar o mouse no LI, mostra o UL lateral */
+    .dropdown-submenu:hover > .dropdown-side {
+        display: block;
+    }
+
+    /* 4. Garante que os links dentro do submenu lateral fiquem bonitos */
+    .dropdown-side li a {
+        padding: 10px 15px;
+        display: block;
+        color: #333;
+        text-decoration: none;
+        white-space: nowrap; /* Impede que o texto quebre linha */
+    }
+       
+    .tabela-form input,
+    .tabela-form textarea,
+    .tabela-form select {
+      width: 100%;
+      padding: 7px;
+      margin-bottom: 3px;
+      border: 1px solid gray;
+      border-radius: 5px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+            
+    }
+
+    .tabela-form input:focus,
+    .tabela-form textarea:focus {
+      border-color: #0096c7;
+      outline: none;
+        box-shadow: 0 0 5px rgba(0, 150, 199, 0.2);
+    }
+    
+    .btn-verde {
+        width: 150px;
+        height: 35px;
+        border: 2px solid green; 
+        border-radius: 15px;
+        background-color: #e6fffa;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+
+    .btn-verde:hover {
+        background-color: green !important;
+        color: white !important;
+    }
+
+    /* Ajuste para alinhar os nomes dos campos (labels) */
+    .tabela-form th {
+        width: auto !important;
+        white-space: nowrap;
+        text-align: left;    
+        padding-right: 15px; 
+        font-weight: bold;
+        color: #555;
+        vertical-align: middle;
+    }
+
+    /* Caso algum campo use td na primeira coluna, mantemos a regra */
+    .tabela-form td:first-child {
+        text-align: right;
+        padding-right: 15px;
+        font-weight: bold;
+    }
+
+    .input-busca{
+        margin-top: 20px;
+        margin-left: 20px;
+        width: 300px;
+        padding: 7px;
+        margin-bottom: 10px;
+        border: 1px solid gray;
+        border-radius: 7px;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+    }
+
+    .btn-busca{
+        width: 110px;
+        height: 35px;
+        border: 2px solid green; 
+        border-radius: 15px;
+        background-color: #e6fffa;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-busca:hover{
+        background-color: green;
+        color: white;
+    }
+
+    .botao-logout {
+        background-color: #fff;
+        color: #0096c7 !important;
+        padding: 5px 12px !important; /* Padding pequeno para não estufar */
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 13px;
+        text-transform: uppercase;
+        text-decoration: none;
+        display: inline-flex; /* Mantém o botão alinhado */
+        align-items: center;
+        transition: 0.2s;
+    }
+
+    .botao-logout:hover {
+        background-color: #e6f7ff;
+        transform: translateY(-1px);
+    }
+
+
+    </style>
+</head>
+
+
+<body>
+  <header>
+    <nav>
+        <ul>
+            <li class="dropdown"> <!-- ITEM PAI -->
+                <a href="#" class="dropbtn">BALCÃO &#9662;</a>
+                <ul class="dropdown-content"><!-- SEGUNDA LISTA (A que fica escondida) -->
+                    <li><a href="{% url 'balcao_list' %}">Produtos</a></li>
+                    <li><a href="{% url 'novo_prod' %}">Novo Produto</a></li>
+                    <li><a href="{% url 'venda' %}">Nova Venda</a></li>
+                    <li><a href="{% url 'historico_venda' %}">Histórico</a></li>
+                </ul>
+            </li><!-- FECHA O ITEM PAI -->
+            
+            <!-- SEPARADOR INDEPENDENTE (Borda preta de 25px de altura) -->
+            <li style="border-left: 2px solid #000; height: 25px; margin: 0 15px; list-style: none; align-self: center;"></li>
+
+            <!--MENU FORNECEDORES-->
+            <li class="dropdown"><!--Abertura PAI de Fornecedores-->
+                <a href="#" class="dropbtn">FORNECEDORES &#9662;</a>
+                <ul class="dropdown-content"><!-- LISTA DE FORNECEDORES escondida -->
+                    <li><a href="{% url 'fornec_list' %}">Ver Todos</a></li>
+                    <li><a href="{% url 'grupo_list' %}">Cadastrar Grupo de Fornecedor</a></li>
+                    <li><a href="{% url 'novo_fornecedor' %}">Cadastrar Fornecedor</a></li>
+
+                    <li class="dropdown-submenu"> <!--Nova class para controlar o hover-->
+                        <a href="#" class="dropbtn-sub">Relatórios</a>
+                        <ul class="dropdown-side"> <!--lista relatorios começa escodido-->
+                            <li><a href="{% url 'rel_simp_fornec' %}">Relatório Simplificado</a></li>
+                            <li><a href=" {% url 'rel_comp_fornec' %} ">Relatório Completo</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown-submenu">
+                        <a href="#" class="dropbtn-sub">Ordem de Compra</a>
+                        <ul class="dropdown-side">
+                            <li><a href="{% url 'ordem_compra' %} ">Gerar Ordem de Compra</a></li>
+                            <li><a href="{% url 'listar_ordens_compra' %}">Listar Ordens de Compra</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li><!-- Fechamento PAI de Fornecedores --> 
+            
+            <!-- SEPARADOR INDEPENDENTE (Borda preta de 25px de altura) -->
+            <li style="border-left: 2px solid #000; height: 25px; margin: 0 15px; list-style: none; align-self: center;"></li>
+
+             <li class="dropdown"> <!--ABERTURA PAI NOTAS FISCAIS  -->
+                <a href="#" class="dropbtn">NOTAS FISCAIS &#9662;</a>
+                <ul class="dropdown-content"><!-- LISTA DE FORNECEDORES escondida -->
+                    <li><a href="{% url 'notas_entrada' %} ">Notas Fiscais - ENTRADA</a></li>
+                    <li><a href="#">Notas Fiscais - SAIDA</a></li>
+                </ul>
+            </li> <!--FECHAMENTO PAI NOTAS FISCAIS-->
+
+            <!-- SEPARADOR INDEPENDENTE (Borda preta de 25px de altura) -->
+            <li style="border-left: 2px solid #000; height: 25px; margin: 0 15px; list-style: none; align-self: center;"></li>
+            
+            <li class="dropdown"> <!-- Abertura pai de configurações. -->
+                <a href="#" class="dropbtn">Configurações do Sistema &#9662;</a>
+                <ul class="dropdown-content"> <!-- Lista de configurações escondida -->
+                    <li><a href="{% url 'register' %}">Registrar Usuário</a></li>
+                </ul>
+            </li> <!-- FECHAMENTO pai configurações  -->
+
+            <!-- SEPARADOR INDEPENDENTE (Borda preta de 25px de altura) -->
+            <li style="border-left: 2px solid #000; height: 25px; margin: 0 15px; list-style: none; align-self: center;"></li>
+
+            <li style="padding-left: 250px;">
+                <a href="{% url 'logout' %}" class="botao-logout">Sair do sistema</a>
+            </li>
+
+        </ul>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Padaria do Diego!!</p>
+  </footer>
+
+</body>
+</html>
+
+
+

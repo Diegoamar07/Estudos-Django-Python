@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Balcão - Padaria do Diego{% endblock %}
+
+{% block content %}
+
+    <h2 style="color: #0096c7; margin-bottom: 20px; margin-left: 20px; padding-bottom: 5px; text-align: left; text-decoration: underline;">
+        Listagem de Produtos
+    </h2>
+
+    <form method="GET">
+        <input type="text" class="input-busca" name="busca" placeholder="Digite o produto" autofocus>
+        <button type="submit" class="btn-busca">Buscar</button>
+    </form>
+
+    <style>
+        .tabela-relatorio {
+            width: 95%;
+            margin-left: 20px;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tabela-relatorio th {
+            background-color: #2e7d32; /* Um verde elegante para fornecedores */
+            color: white;
+            text-align: left;
+            padding: 12px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .tabela-relatorio td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        /* Efeito "zebrado" (uma linha sim, outra não) */
+        .tabela-relatorio tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Efeito ao passar o mouse */
+        .tabela-relatorio tr:hover {
+            background-color: aquamarine;
+        }
+    </style>
+
+    {% if balcao %}
+        <table class="tabela-relatorio"> 
+            <thead>
+                <tr>
+                    <th>Nome do Produto</th>
+                    <th>Tipo do Produto</th>
+                    <th>Preço</th>
+                    <th>Estoque</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in balcao %}
+                    <tr>
+                        <td><strong>{{p.nome_produto}}</strong></td> 
+                        <td>{{p.tipo_produto}}</td>
+                        <td>
+                            <small style="font-size: 0.8em; color: #666;">R$ </small>
+                            {{p.preco}}
+                            <small style="font-size: 0.8em; color: #666;">Reais.</small>
+                        </td>
+                        <td>{{p.estoque|floatformat:2}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    <h2 style="margin-left: 20px;">Total de produtos: {{quantidade_produtos}} </h2>
+    <p style="margin-left: 20px;">Maior Preço: R$ {{maior_preco|floatformat}} Reais. </p>
+    <p style="margin-left: 20px;">Menor Preço: R$ {{menor_preco|floatformat:2}} Reais. </p>
+
+    {% else %}
+        <p style="margin-left: 20px; color: black;">Nenhum dado encontrado!</p>
+    {% endif %}
+
+{% endblock %}

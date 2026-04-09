@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h2 style="color: #0096c7; margin-bottom: 20px; padding-bottom: 5px; text-align: left; text-decoration: underline;">
+        Cadastro Nova Venda
+    </h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <table class="tabela-form" style="margin-left: 20px;">
+            {% for campo in nova_venda_form %}
+                <tr>
+                    <td>{{campo.label_tag}}</td>
+
+                    <td style="display: flex; align-items: center; gap: 10px">
+                        {{campo}}
+
+                        {% if campo.name == "produto" %}
+                        <span style="white-space: nowrap;">
+                            <span id="preco-prod" style="font-weight: bold; border: 1px solid black; padding: 5px 10px; border-radius: 5px;">0.00</span>
+                        </span>
+                        {% endif %}
+
+                        {% if campo.name == "quantidade" %}
+                        <span style="white-space: nowrap;">
+                            <span id="total-venda" style="font-weight: bold; border: 1px solid black; padding: 5px 10px; border-radius: 5px;">0.00</span>
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <input type="submit" value="Cadastrar Venda" class="btn-verde">
+
+    </form>
+
+    <script>
+
+        const precos = eval(`({{precos_dict|safe}})`)
+        const id_produto = document.getElementById("id_produto")
+        const id_quantidade = document.getElementById("id_quantidade")
+
+        function atualizarCalculos(){
+            // captura o ID do campo produto que foi selecionado
+            let id_selecionado = id_produto.value;
+            // captura o preco do ID selecionado
+            let preco_final = parseFloat(precos[id_selecionado]) || 0;
+            
+            let qtd = parseFloat(id_quantidade.value) || 0;
+            let total = qtd * preco_final
+
+            document.getElementById("preco-prod").innerText = "Preço Atual: R$ " + preco_final.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById("total-venda").innerText = "Total Venda: R$ " + total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Escuta quando muda o produto
+        id_produto.addEventListener("change", atualizarCalculos)
+        // Escuta quando muda a quantidade
+        id_quantidade.addEventListener("input", atualizarCalculos)
+    </script>
+
+{% endblock %}

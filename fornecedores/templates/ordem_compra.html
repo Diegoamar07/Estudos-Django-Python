@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h2 style="color: #0096c7; margin-bottom: 20px; margin-left: 20px; padding-bottom: 5px; text-align: left; text-decoration: underline;">
+        Cadastro Ordem de Compra
+    </h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <table class="tabela-form" style="margin-left: 20px;">
+            {% for field in ordem_compra %}
+                <tr>
+                    <!-- Este elemento pega os LABELs do verbose_name definido no model para cada campo -->
+                    <td> {{field.label_tag}} </td>
+                    <td style="display: flex; align-items: center; gap: 10px">
+                    {{field}} 
+
+                    {% if field.name == "produto" %}
+                        <span style="white-space: nowrap; font-weight: bold;">
+                            <span id="unidade" style="border: 1px solid black; padding: 5px 10px; border-radius: 5px;">--</span>
+                            <span id="exibir-preco" style="border: 1px solid black; padding: 5px 10px; border-radius: 5px;">0.00</span>                            
+                        </span>
+                    {% else %}
+                        {% if field.name == "quantidade" %}
+                            <span style="white-space: nowrap;">
+                                <span id="total-oc" style="font-weight: bold; border: 1px solid black; padding: 5px 10px; border-radius: 5px;">0.00</span>
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}            
+        </table>
+
+        <input type="submit" value="Cadastrar Ordem de Compra" class="btn-verde" style="width: 200px; margin-left: 20px;">
+    </form>
+    
+    <script>
+        // para o JS entender a lista que vem do django transformamos ele em um formato
+        // JSON com metodo parse.
+        //const precos = {{precos_dict|safe}};
+
+        // Faz a mesma coisa que o codigo acima: const precos = {{precos_dict|safe}};
+        // porem tira o erro do interpretador VSCODE sobre esta linha. ele fica
+        // sublinhado em vermelho mas o codigo acima roda normal. 
+        const precos = eval(`({{ precos_dict|safe }})`);
+        const id_produto = document.getElementById("id_produto");
+        const id_quantidade = document.getElementById("id_quantidade");
+     
+        function exibirValores(){
+
+            let id_selecionado = id_produto.value;
+            // Agora 'dados' será algo como [10.50, "UN"]
+            let dados = precos[id_selecionado]
+           
+            let preco_final = parseFloat(dados[0]) || 0;
+            let unidade = dados[1];
+
+            let qtd = parseFloat(id_quantidade.value) || 0;
+            let total = qtd * preco_final;
+
+            document.getElementById("exibir-preco").innerText = "Preço Atual: R$ " + preco_final.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });       
+            document.getElementById("total-oc").innerText = "Total OC: R$ " + total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById("unidade").innerText = unidade;
+        }
+
+        id_produto.addEventListener("change", exibirValores);
+        id_quantidade.addEventListener("input", exibirValores);
+
+    </script>
+
+
+{% endblock %}
+
+

@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Histórico de Vendas Balcão</h1>
+
+    <style>
+        th { padding: 10px;}
+    </style>
+
+    <table border="1" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead style="background-color: gray;">
+            <tr>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Unidade</th>
+                <th>Total da Venda</th>
+            </tr>
+        </thead>
+        <tbody>
+            <style>
+                td { padding: 8px; }
+                td:nth-child(2){ 
+                    color: blue;
+                    font-weight: bold;
+                    text-align: center;
+                }
+                td:nth-child(4){
+                    color: green;
+                    text-align: right;
+                }
+            </style>
+
+            {% for v in vendas %}
+                <tr>
+                    <td>{{ v.produto.nome_produto }}</td>
+                    <td>{{ v.quantidade }}</td>
+                    <td>{{ v.unidade }}</td>
+                    <!-- floatformat:2 garante as duas casas decimais do Real -->
+                    <td>R$ {{ v.total|floatformat:2 }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 20px;">
+                        Nenhuma venda registrada no sistema.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <p><strong>Destaque (Maior Venda):</strong> R$ {{ maior_venda|floatformat:2 }} - Produto: {{ nome_produto }}</p>
+        <h3 style="text-align: right;">Resumo Financeiro</h3>
+        <p style="text-align: right; color: black; font-size: 20px;"><strong>Total Faturamento:</strong> R$ {{ total_faturamento|floatformat:2 }} Reais.</p>
+    </div>
+
+{% endblock %}
